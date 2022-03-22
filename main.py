@@ -9,4 +9,4 @@ def stage_4_implementation():
 
 
 if __name__ == "__main__":
-    stage_4_implementation()
+    Ch.deliver_user_request()

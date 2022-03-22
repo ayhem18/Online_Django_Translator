@@ -50,3 +50,9 @@ At this stage, your program should:
 7. Output the line Translations.
 8. Output a list with translations of the given word in the target language: ['bonjour', 'salut'].
 9. Output a list with examples of sentences featuring the given word or any of its translations: ['Well, hello, freedom fighters.', 'Et bien, bonjour combattants de la liberté.']. Both the original versions of the sentences and their translations should be printed. You don't need to filter sentences in any way: just print all the sentences that ReversoContext output for the given language pair and the given word.
+
+## Stage 3 Description:
+mainly output related modifications
+
+## Stage 4 Description:
+
