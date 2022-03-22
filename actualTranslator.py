@@ -1,9 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import re
 
-
-user_site_map = {"en": "english", "fr": "french"}
 
 # The computer needs to represent itself as a certain user-agent to ensure connection establishment
 headers = {'User-Agent': 'Mozilla/5.0'}
@@ -21,9 +18,8 @@ examples_id = "examples-content"
 
 
 def create_url(user_language_1, user_language_2, word):
-    site_language_1 = user_site_map[user_language_1]
-    site_language_2 = user_site_map[user_language_2]
-    return website_basic_url.format(site_language_1, site_language_2, word)
+    return website_basic_url.format(user_language_1.lower(),
+                                    user_language_2.lower(), word)
 
 
 # this method establishes successful connection with the site
@@ -34,7 +30,6 @@ def establish_connection(url):
 
     while not response:
         response = requests.get(url, headers)
-    print(successful_connection.format(str(response.status_code)))
     return response
 
 
@@ -42,7 +37,7 @@ def establish_connection(url):
 # with an id = "translations-content". The search should be according to this data
 def find_literal_translations(soup):
     links = soup.find("div", {"id": literal_translations_id}).findAll('a')
-    print([link.text.strip() for link in links])
+    return [link.text.strip() for link in links]
 
 
 # after inspecting the site, the examples are included in a section element
@@ -51,7 +46,7 @@ def find_examples(soup):
     examples = soup.findAll("section", {"id": examples_id})
     for example in examples:
         expressions = example.findAll('span', {"class": "text"})
-        print([expression.text.strip() for expression in expressions])
+        return [expression.text.strip() for expression in expressions]
 
 
 # a method that gather all the logic and provide a translation
@@ -59,7 +54,6 @@ def find_examples(soup):
 def translate(user_language1, user_language2, word):
     url = create_url(user_language1, user_language2, word)
     response = establish_connection(url)
-    print("Translations")
+
     soup = BeautifulSoup(response.content, beautifulSoup_parser_arg)
-    find_literal_translations(soup)
-    find_examples(soup)
+    return find_literal_translations(soup), find_examples(soup)
