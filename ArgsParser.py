@@ -7,6 +7,8 @@ all_languages_arg = "all"
 help_arg = "Please make sure to choose one of the supported languages"
 
 
+# this method creates am argparse.ArgumentParser object that might be used to parse
+# the command line arguments passed to the application
 def app_arg_parser():
     supported_languages_extended = ["all"]
     for lang in Ch.supported_languages:

@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 
 
 # The computer needs to represent itself as a certain user-agent to ensure connection establishment
+import Checker
+
 headers = {'User-Agent': 'Mozilla/5.0'}
 # the general form of the website's url
 website_basic_url = "https://context.reverso.net/translation/{}-{}/{}"
@@ -17,6 +19,7 @@ literal_translations_id = "translations-content"
 examples_id = "examples-content"
 
 
+# return the customized url used to establish a connection with the website
 def create_url(user_language_1, user_language_2, word):
     return website_basic_url.format(user_language_1.lower(),
                                     user_language_2.lower(), word)
@@ -26,11 +29,7 @@ def create_url(user_language_1, user_language_2, word):
 # and return the corresponding response object
 def establish_connection(url):
     # create a response object, make sure to pass the corresponding headers
-    response = requests.get(url, headers=headers)
-
-    while not response:
-        response = requests.get(url, headers)
-    return response
+    return requests.get(url, headers=headers)
 
 
 # after inspecting the site, the literal translations are included in a div
@@ -53,7 +52,18 @@ def find_examples(soup):
 # to the user
 def translate(user_language1, user_language2, word):
     url = create_url(user_language1, user_language2, word)
-    response = establish_connection(url)
+    try:
+        response = establish_connection(url)
+        assert response is not None
+        soup = BeautifulSoup(response.content, beautifulSoup_parser_arg)
+        return find_literal_translations(soup), find_examples(soup)
 
-    soup = BeautifulSoup(response.content, beautifulSoup_parser_arg)
-    return find_literal_translations(soup), find_examples(soup)
+    # except statement to cover the case of failed connection: response is None
+    except AssertionError:
+        print(Checker.failed_connection_msg)
+        return None, None
+    # except statement to cover the case of unexpected word to translate: exception raised by
+    # find_literal_translations function
+    except:
+        print(Checker.unexpected_word_msg.format(word))
+        return None, None

@@ -2,6 +2,13 @@
 
 This project is listed in the "hard" category in the "Django Developer" track offered by the online education platform
 "JetBrains Academy". The project consists of 7 stages.
+All stages in this project were validated by the platform test cases.
+The project considers several topics such as: 
+1. Requests library
+2. Beautiful soup library
+3. Web development basics: HTML and CSS
+4. Command line arguments and argparse library
+5. working with files
 
 ## Stage 1 Description:
 The first step of this project is preparation for a convenient translation process. 
@@ -22,9 +29,11 @@ user.
 
 ## Stage 2 Description:
 
-At this stage, you'll be able to implement a real translator program! A great website called ReversoContext will help you to do that. ReversoContext is a multilingual translator tool that allows seeing original phrases that should be translated and their equivalents in other languages in contexts (example sentences). That's a very useful feature since the meaning of the word depends greatly on the context. Hence, when you see a context, it's easier for you to choose the right translation.
+At this stage, you'll be able to implement a real translator program! A great website called ReversoContext 
+will help you to do that. ReversoContext is a multilingual translator tool that allows seeing original phrases that should be translated and their equivalents in other languages in contexts (example sentences). That's a very useful feature since the meaning of the word depends greatly on the context. Hence, when you see a context, it's easier for you to choose the right translation.
 
-The goal of your program at this stage is to find translations and example sentences for a given word. The word can be either in French or in English, and the translation should be in the opposite language (that is, English or French, respectively).
+The goal of your program at this stage is to find translations and example sentences for a given word. 
+The word can be either in French or in English, and the translation should be in the opposite language (that is, English or French, respectively).
 
 To understand how to do this, go to ReversoContext and type any word you want to translate. After receiving the result, pay attention to the address bar of your browser. You will see the URL, for example:
 
@@ -96,3 +105,29 @@ Add the following functionality to your program:
 2. If the user inputs 0 as the target language, translate the word to all available languages.
 3. Output results to the terminal, as in the previous stage. At this stage, it's enough to print just one translation and one sentence pair per target language.
 4. Save results of the search to a file named word.txt, where word is the word that was being translated.
+
+## Stage 6 Description:
+Let's try to change the way the user interacts with the program to make the process faster. 
+To make your program more convenient, you can use command-line arguments. They make it possible to provide a program with all the data it needs using a simple command.
+
+### Objectives
+At this stage, your program should:
+
+1. Instead of all inputs, take command-line arguments. The first argument is the name of the source language, 
+2. the second argument is the name of the target language, the third argument is the word. If the word should be translated to all languages, the second argument will be "all".
+The rest of the functionality should remain the same as in the previous stage.
+3. You'll see some significant changes in the usability of the app!
+
+## Stage 7 Description:
+Your program works as expected! However, there’s a problem you should always keep in mind: the user can always input something that will break your program.
+
+Up to this stage, we considered "perfect" inputs. But what if things go wrong? For example, you gave your program to someone who’s not familiar with the concept behind it. What if they try to translate to or from languages different from those you have in your code, or even start typing jabberwocky? Let's find some way to avoid this.
+
+All these situations are called exceptions because you didn’t expect them to happen, and now your program will have to handle them.
+
+### Objectives
+Add the following functionality:
+
+1. If the user inputs a name of a language that isn't available in the program, print the line Sorry, the program doesn't support <language> and quit the program.
+2. If the connection with the website isn't successful, print the line Something wrong with your internet connection
+3. If the user inputs a word that's not present in ReversoContext, print the line Sorry, unable to find <word>

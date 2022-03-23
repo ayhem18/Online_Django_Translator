@@ -2,7 +2,6 @@ from multipledispatch import dispatch
 import actualTranslator as T
 import ArgsParser as Ap
 
-
 supported_languages = ["arabic", "german", "english", "spanish", "french", "hebrew", "japanese",
                        "dutch", "polish", "portuguese", "romanian", "russian", "turkish"]
 
@@ -15,6 +14,12 @@ choose_target_language = "Type the number of language you want to translate to:"
 ask_for_word = "Type the word you want to translate:"
 
 display_limit = 5
+
+failed_connection_msg = "Something wrong with your internet connection"
+
+unsupported_language_msg = "Sorry, the program doesn't support {}"
+
+unexpected_word_msg = "Sorry, unable to find {}"
 
 
 def get_valid_input(valid_input_set, prompt_message=None):
@@ -48,31 +53,18 @@ def get_valid_translation_data():
     return source_language_index, target_language_index, word
 
 
-@dispatch(str, str, str)
-def print_words_examples(words, examples, destination_language):
-    print()
-    print("{} Translations:".format(destination_language))
-    for i in range(min(display_limit, len(words))):
-        print(words[i])
-
-    print()
-    print("{} Examples:".format(destination_language))
-    for i in range(0, min(display_limit * 2, len(examples)), 2):
-        print(examples[i])
-        print(examples[i + 1])
-        print()
-
-
+# given a list of words (translations) and list of examples, this function creates a string
+# representing how these two lists should be displayed on the console as well as written to a file
 @dispatch(str, list, list, str, int)
 def print_words_examples(content, words, examples, target_lang, display_number=display_limit):
     new_content = content
-    new_content += "{} Translations:".format(target_lang) + "\n"
+    new_content += "{} Translations:".format(target_lang.capitalize()) + "\n"
     for i in range(min(display_number, len(words))):
         new_content += words[i] + "\n"
     new_content += "\n"
-
-    new_content += "{} Examples:".format(target_lang) + "\n"
-    for i in range(0, min(display_number * 2, len(examples)), 2):
+    limit = min(display_number * 2, len(examples))
+    new_content += "{} Example{}:".format(target_lang.capitalize(), "" if limit <= 2 else "s") + "\n"
+    for i in range(0, limit, 2):
         new_content += examples[i] + "\n"
         new_content += examples[i + 1] + "\n"
         new_content += "\n"
@@ -80,23 +72,37 @@ def print_words_examples(content, words, examples, target_lang, display_number=d
     return new_content
 
 
+# this function extracts the returned translations and examples from the website
+# and append them to the argument "content". content is later to be displayed to the console
 @dispatch(str, str, str, str, int)
 def translate_display(content, source_lang, target_lang, word, display_number):
-    words, examples = T.translate(source_lang, target_lang, word)
-    return print_words_examples(content, words, examples, target_lang,
-                                display_number)
+    try:
+        words, examples = T.translate(source_lang, target_lang, word)
+        assert words is not None and examples is not None
+        return print_words_examples(content, words, examples, target_lang,
+                                    display_number)
+    except AssertionError:
+        pass
 
 
+# this function handles the different scenarios:
+# one to one translation or one to all translations
 @dispatch(str, str, str)
 def deliver_user_request(source_lang, target_lang, word):
-    content = ""
-    if target_lang == Ap.all_languages_arg:
-        for language in supported_languages:
-            if language != source_lang:
-                content = \
-                    translate_display(content, source_lang, language, word, 1)
-    else:
-        content = translate_display(content, source_lang, target_lang, word, display_limit)
-    print(content)
-    with open("{}.txt".format(word), "a", encoding="utf-8") as write_file:
-        write_file.write(content)
+    try:
+        content = ""
+        if target_lang == Ap.all_languages_arg:
+            for language in supported_languages:
+                if language != source_lang:
+                    content = \
+                        translate_display(content, source_lang, language, word, 1)
+        else:
+            content = translate_display(content, source_lang, target_lang, word, display_limit)
+
+        assert content
+
+        print(content)
+        with open("{}.txt".format(word), "a", encoding="utf-8") as write_file:
+            write_file.write(content)
+    except:
+        pass
