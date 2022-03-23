@@ -1,8 +1,10 @@
 from multipledispatch import dispatch
 import actualTranslator as T
+import ArgsParser as Ap
 
-supported_languages = ["Arabic", "German", "English", "Spanish", "French", "Hebrew", "Japanese",
-                       "Dutch", "Polish", "Portuguese", "Romanian", "Russian", "Turkish"]
+
+supported_languages = ["arabic", "german", "english", "spanish", "french", "hebrew", "japanese",
+                       "dutch", "polish", "portuguese", "romanian", "russian", "turkish"]
 
 welcome_sentence = "Hello, welcome to the translator. Translator supports:"
 
@@ -75,32 +77,26 @@ def print_words_examples(content, words, examples, target_lang, display_number=d
         new_content += examples[i + 1] + "\n"
         new_content += "\n"
     new_content += "\n"
-    # if file_name is not None:
-    #     with open(file_name, "a") as write_file:
-    #         write_file.write(content)
-    #         write_file.write(content)
     return new_content
 
 
-@dispatch(str, int, int, str, int)
-def translate_display(content, source_lang_index, target_lang_index, word, display_number):
-    words, examples = T.translate(supported_languages[source_lang_index - 1],
-                                  supported_languages[target_lang_index - 1], word)
-    return print_words_examples(content, words, examples, supported_languages[int(target_lang_index) - 1].capitalize(),
+@dispatch(str, str, str, str, int)
+def translate_display(content, source_lang, target_lang, word, display_number):
+    words, examples = T.translate(source_lang, target_lang, word)
+    return print_words_examples(content, words, examples, target_lang,
                                 display_number)
 
 
-def deliver_user_request():
-    source_lang_index, target_lang_index, word = get_valid_translation_data()
+@dispatch(str, str, str)
+def deliver_user_request(source_lang, target_lang, word):
     content = ""
-    if int(target_lang_index) == 0:
-        for i in range(len(supported_languages)):
-            if i != int(source_lang_index) - 1:
+    if target_lang == Ap.all_languages_arg:
+        for language in supported_languages:
+            if language != source_lang:
                 content = \
-                    translate_display(content, int(source_lang_index), i + 1, word, 1)
+                    translate_display(content, source_lang, language, word, 1)
     else:
-        content = translate_display(content, int(source_lang_index), int(target_lang_index), word, display_limit)
+        content = translate_display(content, source_lang, target_lang, word, display_limit)
     print(content)
-
-    with open("{}.txt".format(word), "a") as write_file:
+    with open("{}.txt".format(word), "a", encoding="utf-8") as write_file:
         write_file.write(content)
