@@ -56,3 +56,43 @@ mainly output related modifications
 
 ## Stage 4 Description:
 
+Great job! You now have a basic translation app that works well. Wouldn’t it be great though to expand it and include all available languages? This will finally make our translator a multilingual one!
+
+The maximum number of languages our translator can support is 13. They are:
+
+Arabic
+German
+English
+Spanish
+French
+Hebrew
+Japanese
+Dutch
+Polish
+Portuguese
+Romanian
+Russian
+Turkish
+They should be enumerated in the program. A great idea is to present them with relevant numbers so that the user can choose the first as the original language and the second as a translation.
+
+### Objectives
+At this stage, your program should:
+
+1. Output the welcoming message (let's update it a bit): Hello, welcome to the translator. Translator supports:
+2. Output an enumerated list of languages. The enumeration should start from 1. The order of languages should be exactly as in the list above.
+3. Take input (a number from the list) specifying the source language (the language from which the translation should be performed).
+4. Take input (a number from the list) specifying the target language (the language to which the translation should be performed).
+5. Take input specifying the word that should be translated.
+6. Output the results as in the previous stage. At this stage, you don't need to print 200 OK anymore.
+
+## Stage 5 Description:
+
+Perfect! Your program already became a convenient tool. There are just a couple of stages left. Your translation app is flexible enough to be appreciated by many people worldwide, so let's make it even better: add the feature of translating the word to all the languages at once, and also save the search results to a text file so that the user could read the translations later.
+
+### Objectives
+Add the following functionality to your program:
+
+1. Before taking an input specifying the target language, output the message Type the number of a language you want to translate to or '0' to translate to all languages:
+2. If the user inputs 0 as the target language, translate the word to all available languages.
+3. Output results to the terminal, as in the previous stage. At this stage, it's enough to print just one translation and one sentence pair per target language.
+4. Save results of the search to a file named word.txt, where word is the word that was being translated.

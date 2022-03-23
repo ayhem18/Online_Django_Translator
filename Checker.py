@@ -61,43 +61,46 @@ def print_words_examples(words, examples, destination_language):
         print()
 
 
-@dispatch(list, list, str, int, str)
-def print_words_examples(words, examples, target_lang, display_number=display_limit, file_name=None):
-    words_string = "\n"
-    words_string += "{} Translations:".format(target_lang) + "\n"
-
+@dispatch(str, list, list, str, int)
+def print_words_examples(content, words, examples, target_lang, display_number=display_limit):
+    new_content = content
+    new_content += "{} Translations:".format(target_lang) + "\n"
     for i in range(min(display_number, len(words))):
-        words_string += words[i] + "\n"
+        new_content += words[i] + "\n"
+    new_content += "\n"
 
-    examples_string = "\n"
-    examples_string += "{} Examples:".format(target_lang) + "\n"
+    new_content += "{} Examples:".format(target_lang) + "\n"
     for i in range(0, min(display_number * 2, len(examples)), 2):
-        examples_string += examples[i] + "\n"
-        examples_string += examples[i + 1] + "\n"
-        examples_string += "\n"
-
-    print(words_string)
-    print(examples_string)
-
-    if file_name is not None:
-        with open(file_name, "a") as write_file:
-            write_file.write(words_string)
-            write_file.write(examples_string)
+        new_content += examples[i] + "\n"
+        new_content += examples[i + 1] + "\n"
+        new_content += "\n"
+    new_content += "\n"
+    # if file_name is not None:
+    #     with open(file_name, "a") as write_file:
+    #         write_file.write(content)
+    #         write_file.write(content)
+    return new_content
 
 
-@dispatch(int, int, str)
-def translate_display(source_lang_index, target_lang_index, word):
+@dispatch(str, int, int, str, int)
+def translate_display(content, source_lang_index, target_lang_index, word, display_number):
     words, examples = T.translate(supported_languages[source_lang_index - 1],
                                   supported_languages[target_lang_index - 1], word)
-    print_words_examples(words, examples, supported_languages[int(target_lang_index) - 1].capitalize(),
-                         1, "{}.txt".format(word))
+    return print_words_examples(content, words, examples, supported_languages[int(target_lang_index) - 1].capitalize(),
+                                display_number)
 
 
 def deliver_user_request():
     source_lang_index, target_lang_index, word = get_valid_translation_data()
+    content = ""
     if int(target_lang_index) == 0:
         for i in range(len(supported_languages)):
-            if i != int(source_lang_index):
-                translate_display(int(source_lang_index), i + 1, word)
+            if i != int(source_lang_index) - 1:
+                content = \
+                    translate_display(content, int(source_lang_index), i + 1, word, 1)
     else:
-        translate_display(int(source_lang_index), int(target_lang_index), word)
+        content = translate_display(content, int(source_lang_index), int(target_lang_index), word, display_limit)
+    print(content)
+
+    with open("{}.txt".format(word), "a") as write_file:
+        write_file.write(content)
